@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "lib": ["es5", "DOM"],
+    "jsx": "react-jsx",
+    "baseUrl": "./",
+    "esModuleInterop": true,
+    "resolveJsonModule": true
+  }
+}
