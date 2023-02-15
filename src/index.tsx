@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { motion, useAnimation } from "framer-motion";
 import { v4 as uuidV4 } from "uuid";
 
 type Props = {
@@ -15,18 +16,11 @@ const Eye: React.FC<Props> = (props) => {
   const { width, height, irisWidth, irisHeight, irisColor, className, style } =
     props;
   const [targetPosition, setTargetPosition] = useState({ x: 0, y: 0 });
-  const [irisPosition, setIrisPosition] = useState({ x: 0, y: 0 });
+  const irisControl = useAnimation();
   const eyeRef = useRef(null);
   const irisRef = useRef(null);
   const clipId = uuidV4();
-  useEffect(() => {
-    const reactMouse = (e) => {
-      setTargetPosition({ x: e.pageX, y: e.pageY });
-    };
-    window.addEventListener("mousemove", reactMouse);
-    return () => window.removeEventListener("mousemove", reactMouse);
-  }, []);
-  useEffect(() => {
+  const focus = () => {
     if (eyeRef.current && irisRef.current) {
       const currentRect = eyeRef.current.getBoundingClientRect();
       const currentIrisRect = irisRef.current.getBoundingClientRect();
@@ -45,9 +39,10 @@ const Eye: React.FC<Props> = (props) => {
           distance.y ** 2 / insideRangeEllipse.y ** 2 <=
         1
       ) {
-        setIrisPosition({
-          x: targetPosition.x - currentRect.x,
-          y: targetPosition.y - currentRect.y,
+        irisControl.start({
+          cx: targetPosition.x - currentRect.x,
+          cy: targetPosition.y - currentRect.y,
+          transition: { duration: 0.05 },
         });
       } else {
         const degToCalc = deg;
@@ -58,15 +53,37 @@ const Eye: React.FC<Props> = (props) => {
             (1 / insideRangeEllipse.x) ** 2 +
               (Math.tan(degToCalc) / insideRangeEllipse.y) ** 2
           );
-        setIrisPosition({
-          x: x * (distance.x < 0 ? -1 : 1) + currentRect.width / 2,
-          y:
+        irisControl.start({
+          cx: x * (distance.x < 0 ? -1 : 1) + currentRect.width / 2,
+          cy:
             x * Math.tan(degToCalc) * (distance.x < 0 ? -1 : 1) +
             currentRect.height / 2,
+          transition: { duration: 0.05 },
         });
       }
     }
+  };
+  useEffect(() => {
+    const reactMouse = (e: MouseEvent) => {
+      setTargetPosition({ x: e.pageX, y: e.pageY });
+    };
+    window.addEventListener("mousemove", reactMouse);
+    return () => window.removeEventListener("mousemove", reactMouse);
+  }, []);
+  const timerRef = useRef(null);
+  useEffect(() => {
+    clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      console.log("est");
+      irisControl.start({
+        cx: width / 2,
+        cy: height / 2,
+        transition: { bounce: 0.1, duration: 0.6 },
+      });
+    }, 1000);
+    focus();
   }, [targetPosition]);
+
   return (
     <svg
       width={width}
@@ -86,22 +103,23 @@ const Eye: React.FC<Props> = (props) => {
         </clipPath>
       </defs>
       <g clipPath={`url(#${clipId})`}>
-      <ellipse
-        ref={eyeRef}
-        cx={width / 2}
-        cy={height / 2}
-        rx={width / 2}
-        ry={height / 2}
-        fill="#FFF"
-      />
-      <ellipse
-        ref={irisRef}
-        cx={irisPosition.x}
-        cy={irisPosition.y}
-        rx={irisWidth / 2}
-        ry={irisHeight / 2}
-        fill={irisColor}
-      />
+        <ellipse
+          ref={eyeRef}
+          cx={width / 2}
+          cy={height / 2}
+          rx={width / 2}
+          ry={height / 2}
+          fill="#FFF"
+        />
+        <motion.ellipse
+          ref={irisRef}
+          cx={width / 2}
+          cy={height / 2}
+          rx={irisWidth / 2}
+          ry={irisHeight / 2}
+          fill={irisColor}
+          animate={irisControl}
+        />
       </g>
     </svg>
   );
