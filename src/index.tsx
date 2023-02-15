@@ -20,6 +20,7 @@ const Eye: React.FC<Props> = (props) => {
   const eyeRef = useRef(null);
   const irisRef = useRef(null);
   const clipId = uuidV4();
+  const timerRef = useRef(null);
   const focus = () => {
     if (eyeRef.current && irisRef.current) {
       const currentRect = eyeRef.current.getBoundingClientRect();
@@ -67,20 +68,24 @@ const Eye: React.FC<Props> = (props) => {
     const reactMouse = (e: MouseEvent) => {
       setTargetPosition({ x: e.pageX, y: e.pageY });
     };
+    const reactMouseLeave = () => {
+      clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => {
+        irisControl.start({
+          cx: width / 2,
+          cy: height / 2,
+          transition: { bounce: 0.1, duration: 0.6 },
+        });
+      }, 1000);
+    }
     window.addEventListener("mousemove", reactMouse);
-    return () => window.removeEventListener("mousemove", reactMouse);
+    window.document.addEventListener("mouseleave", reactMouseLeave);
+    return () => {
+      window.removeEventListener("mousemove", reactMouse);
+      window.document.removeEventListener("mouseleave", reactMouseLeave);
+    }
   }, []);
-  const timerRef = useRef(null);
   useEffect(() => {
-    clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => {
-      console.log("est");
-      irisControl.start({
-        cx: width / 2,
-        cy: height / 2,
-        transition: { bounce: 0.1, duration: 0.6 },
-      });
-    }, 1000);
     focus();
   }, [targetPosition]);
 
