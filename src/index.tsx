@@ -10,18 +10,30 @@ type Props = {
   className?: string;
   style?: React.CSSProperties;
   irisColor?: string;
+  controlerRef?: React.MutableRefObject<Controler>;
 };
 
+export type Controler = {
+  watch: (targetPosition: { x: number; y: number }) => void;
+};
 const Eye: React.FC<Props> = (props) => {
-  const { width, height, irisWidth, irisHeight, irisColor, className, style } =
-    props;
-  const [targetPosition, setTargetPosition] = useState({ x: 0, y: 0 });
+  const {
+    width,
+    height,
+    irisWidth,
+    irisHeight,
+    irisColor,
+    className,
+    style,
+    controlerRef,
+  } = props;
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const irisControl = useAnimation();
   const eyeRef = useRef(null);
   const irisRef = useRef(null);
   const clipId = uuidV4();
   const timerRef = useRef(null);
-  const focus = () => {
+  const focus = ({ targetPosition }) => {
     if (eyeRef.current && irisRef.current) {
       const currentRect = eyeRef.current.getBoundingClientRect();
       const currentIrisRect = irisRef.current.getBoundingClientRect();
@@ -65,8 +77,14 @@ const Eye: React.FC<Props> = (props) => {
     }
   };
   useEffect(() => {
+    if (controlerRef) {
+      const watch = ({ x, y }: { x: number; y: number }) => {
+        focus({ targetPosition: { x, y } });
+      };
+      controlerRef.current = { watch: watch };
+    }
     const reactMouse = (e: MouseEvent) => {
-      setTargetPosition({ x: e.pageX, y: e.pageY });
+      setMousePosition({ x: e.pageX, y: e.pageY });
     };
     const reactMouseLeave = () => {
       clearTimeout(timerRef.current);
@@ -77,17 +95,19 @@ const Eye: React.FC<Props> = (props) => {
           transition: { bounce: 0.1, duration: 0.6 },
         });
       }, 1000);
-    }
+    };
     window.addEventListener("mousemove", reactMouse);
     window.document.addEventListener("mouseleave", reactMouseLeave);
     return () => {
       window.removeEventListener("mousemove", reactMouse);
       window.document.removeEventListener("mouseleave", reactMouseLeave);
-    }
+    };
   }, []);
   useEffect(() => {
-    focus();
-  }, [targetPosition]);
+    focus({
+      targetPosition: mousePosition,
+    });
+  }, [mousePosition]);
 
   return (
     <svg

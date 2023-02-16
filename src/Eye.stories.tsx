@@ -1,13 +1,12 @@
-import React from "react";
-import { ComponentMeta } from "@storybook/react";
-import Eye from "./";
+import React, {useRef, useEffect} from "react";
+import Eye, { Controler } from "./";
 
 export default {
   title: "thisistest",
   parameters: {
     layout: "fullscreen",
   },
-} as ComponentMeta<typeof Eye>;
+};
 
 export const Primary = () => {
   return (
@@ -52,6 +51,10 @@ export const Primary = () => {
 };
 
 export const DifferentRatio = () => {
+  const eyeRef = useRef<Controler>();
+  useEffect(() => {
+    window.addEventListener("click", () => eyeRef.current.watch({x: 0, y: 0}));
+  },[])
   return (
     <div
       style={{
@@ -62,6 +65,7 @@ export const DifferentRatio = () => {
       }}
     >
       <Eye
+        controlerRef={eyeRef}
         width={100}
         height={200}
         irisWidth={60}
