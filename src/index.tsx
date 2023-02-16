@@ -3,13 +3,17 @@ import { motion, useAnimation } from "framer-motion";
 import { v4 as uuidV4 } from "uuid";
 
 type Props = {
-  width: number;
-  height: number;
-  irisWidth: number;
-  irisHeight: number;
+  white: {
+    x: number;
+    y: number;
+  };
+  iris: {
+    x: number;
+    y: number;
+    color?: string;
+  };
   className?: string;
   style?: React.CSSProperties;
-  irisColor?: string;
   controlerRef?: React.MutableRefObject<Controler>;
 };
 
@@ -18,11 +22,8 @@ export type Controler = {
 };
 const Eye: React.FC<Props> = (props) => {
   const {
-    width,
-    height,
-    irisWidth,
-    irisHeight,
-    irisColor,
+    white,
+    iris,
     className,
     style,
     controlerRef,
@@ -38,8 +39,8 @@ const Eye: React.FC<Props> = (props) => {
       const currentRect = eyeRef.current.getBoundingClientRect();
       const currentIrisRect = irisRef.current.getBoundingClientRect();
       const distance = {
-        x: targetPosition.x - (currentRect.left + width / 2 + window.scrollX),
-        y: targetPosition.y - (currentRect.top + height / 2 + window.scrollY),
+        x: targetPosition.x - (currentRect.left + white.x / 2 + window.scrollX),
+        y: targetPosition.y - (currentRect.top + white.y / 2 + window.scrollY),
       };
       const insideRangeEllipse = {
         x: currentRect.width / 2 - currentIrisRect.width / 2,
@@ -90,8 +91,8 @@ const Eye: React.FC<Props> = (props) => {
       clearTimeout(timerRef.current);
       timerRef.current = setTimeout(() => {
         irisControl.start({
-          cx: width / 2,
-          cy: height / 2,
+          cx: white.x / 2,
+          cy: white.y / 2,
           transition: { bounce: 0.1, duration: 0.6 },
         });
       }, 1000);
@@ -111,38 +112,38 @@ const Eye: React.FC<Props> = (props) => {
 
   return (
     <svg
-      width={width}
-      height={height}
-      viewBox={`0, 0, ${width}, ${height}`}
+      width={white.x}
+      height={white.y}
+      viewBox={`0, 0, ${white.x}, ${white.y}`}
       className={className}
       style={style}
     >
       <defs>
         <clipPath id={clipId}>
           <ellipse
-            cx={width / 2}
-            cy={height / 2}
-            rx={width / 2}
-            ry={height / 2}
+            cx={white.x / 2}
+            cy={white.y / 2}
+            rx={white.x / 2}
+            ry={white.y / 2}
           />
         </clipPath>
       </defs>
       <g clipPath={`url(#${clipId})`}>
         <ellipse
           ref={eyeRef}
-          cx={width / 2}
-          cy={height / 2}
-          rx={width / 2}
-          ry={height / 2}
+          cx={white.x / 2}
+          cy={white.y / 2}
+          rx={white.x / 2}
+          ry={white.y / 2}
           fill="#FFF"
         />
         <motion.ellipse
           ref={irisRef}
-          cx={width / 2}
-          cy={height / 2}
-          rx={irisWidth / 2}
-          ry={irisHeight / 2}
-          fill={irisColor}
+          cx={white.x / 2}
+          cy={white.y / 2}
+          rx={iris.x / 2}
+          ry={iris.y / 2}
+          fill={iris.color}
           animate={irisControl}
         />
       </g>
