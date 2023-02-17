@@ -1,6 +1,6 @@
 {
   "name": "react-eye",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "index.js",
   "type": "module",
   "module": "./esm/Eye.js",
@@ -9,7 +9,7 @@
     ".": {
       "default": "./esm/Eye.js"
     }
-  }, 
+  },
   "license": "MIT",
   "devDependencies": {
     "@storybook/addon-essentials": "^7.0.0-beta.48",
