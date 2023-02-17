@@ -1,4 +1,4 @@
-[react-eye](src/img/title.gif)
+![react-eye](src/img/title.gif)
 
 # About
 Eye Component follows mouse
