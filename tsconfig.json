@@ -1,9 +1,13 @@
 {
   "compilerOptions": {
-    "lib": ["es5", "DOM"],
+    "lib": ["ES2021", "es5", "DOM"],
     "jsx": "react-jsx",
     "baseUrl": "./",
     "esModuleInterop": true,
-    "resolveJsonModule": true
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "module": "ES2022",
+    "target": "ES2021",
+    "declaration": true
   }
 }
