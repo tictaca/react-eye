@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { addPropertyControls, ControlType } from "framer"
 import { motion, useAnimation } from "framer-motion";
 import { v4 as uuidV4 } from "uuid";
 import throttle from "./utils/throttle";
@@ -22,15 +23,14 @@ type Props = {
 export type Controler = {
   watch: (targetPosition: { x: number; y: number }) => void;
 };
-const Eye: React.FC<Props> = (props) => {
-  const {
-    white,
-    iris,
-    className,
-    style,
-    controlerRef,
-    throttleInterval
-  } = props;
+
+/**
+ * @framerSupportedLayoutWidth auto
+ * @framerSupportedLayoutHeight auto
+ */
+function Eye(props: Props) {
+  const { white, iris, className, style, controlerRef, throttleInterval } =
+    props;
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const irisControl = useAnimation();
   const eyeRef = useRef(null);
@@ -152,10 +152,28 @@ const Eye: React.FC<Props> = (props) => {
       </g>
     </svg>
   );
-};
+}
+
+addPropertyControls(Eye, {
+    white: {
+        type: ControlType.Object,
+        controls: {
+            x: { type: ControlType.Number, defaultValue: 150 },
+            y: { type: ControlType.Number, defaultValue: 150 },
+        },
+    },
+    iris: {
+        type: ControlType.Object,
+        controls: {
+            x: { type: ControlType.Number, defaultValue: 100 },
+            y: { type: ControlType.Number, defaultValue: 100 },
+            color: { type: ControlType.Color, defaultValue: "#000" },
+        },
+    },
+})
 
 Eye.defaultProps = {
-  throttleInterval: 0,
+    throttleInterval: 0,
 }
 
 export default Eye;
