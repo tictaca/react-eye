@@ -47,6 +47,7 @@ return (
 |controlerRef|React.MutableRefObject<{ watch: (targetPosition: { x: number; y: number }) => void; }>| ref reception for controler, for now only "watch" will back.that make focus for target position specified|
 |throttleInterval|number|specify throttle interval for mouse trace|
 
+**also "style" and "className" are available for styling!**
 
 # Contributing
 Thanks so much for your interest!
