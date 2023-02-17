@@ -15,7 +15,8 @@ yarn:
 yarn add react-eye
 ```
 ## Getting started with react-eye
-```ts
+Here is an example of a basic app with Eye component:
+```js
 import * as React from "react";
 import Eye from "react-eye";
 
