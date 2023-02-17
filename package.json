@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
+  "types": "./types/index.d.ts",
   "license": "MIT",
   "devDependencies": {
     "@storybook/addon-essentials": "^7.0.0-beta.48",
