@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { v4 as uuidV4 } from "uuid";
+import throttle from "./utils/throttle";
 
 type Props = {
   white: {
@@ -15,6 +16,7 @@ type Props = {
   className?: string;
   style?: React.CSSProperties;
   controlerRef?: React.MutableRefObject<Controler>;
+  throttleInterval?: number;
 };
 
 export type Controler = {
@@ -27,6 +29,7 @@ const Eye: React.FC<Props> = (props) => {
     className,
     style,
     controlerRef,
+    throttleInterval
   } = props;
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const irisControl = useAnimation();
@@ -84,9 +87,9 @@ const Eye: React.FC<Props> = (props) => {
       };
       controlerRef.current = { watch: watch };
     }
-    const reactMouse = (e: MouseEvent) => {
+    const reactMouse = throttle((e: MouseEvent) => {
       setMousePosition({ x: e.pageX, y: e.pageY });
-    };
+    }, throttleInterval);
     const reactMouseLeave = () => {
       clearTimeout(timerRef.current);
       timerRef.current = setTimeout(() => {
@@ -151,6 +154,8 @@ const Eye: React.FC<Props> = (props) => {
   );
 };
 
-//module.exports = Eye;
-//module.exports.default = Eye;
+Eye.defaultProps = {
+  throttleInterval: 0,
+}
+
 export default Eye;
