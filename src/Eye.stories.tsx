@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import Eye, { Controler } from "./";
+import Eye, { Controler } from "./Eye";
 
 export default {
   title: "thisistest",
