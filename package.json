@@ -1,6 +1,6 @@
 {
   "name": "react-eye",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "type": "module",
   "main": "./dist/index.js",
   "exports": {
@@ -8,7 +8,9 @@
     "./framer": "./dist/framer.js"
   },
   "types": "./dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "license": "MIT",
   "devDependencies": {
     "@storybook/addon-essentials": "^7.0.0-beta.48",
