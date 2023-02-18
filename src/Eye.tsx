@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
-import { addPropertyControls, ControlType } from "framer"
 import { motion, useAnimation } from "framer-motion";
 import { v4 as uuidV4 } from "uuid";
 import throttle from "./utils/throttle";
 
-type Props = {
+export type Props = {
   white: {
     x: number;
     y: number;
@@ -24,20 +23,17 @@ export type Controler = {
   watch: (targetPosition: { x: number; y: number }) => void;
 };
 
-/**
- * @framerSupportedLayoutWidth auto
- * @framerSupportedLayoutHeight auto
- */
-function Eye(props: Props) {
-  const { white, iris, className, style, controlerRef, throttleInterval } =
-    props;
+type Focus = (props: { targetPosition: { x: number; y: number } }) => void;
+
+const Eye: React.FC<Props> = (props) => {
+  const { white, iris, className, style, controlerRef, throttleInterval = 0 } = props;
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const irisControl = useAnimation();
-  const eyeRef = useRef(null);
-  const irisRef = useRef(null);
+  const eyeRef = useRef<SVGEllipseElement>(null);
+  const irisRef = useRef<SVGEllipseElement>(null);
   const clipId = uuidV4();
-  const timerRef = useRef(null);
-  const focus = ({ targetPosition }) => {
+  const timerRef = useRef<NodeJS.Timer>();
+  const focus: Focus = ({ targetPosition }) => {
     if (eyeRef.current && irisRef.current) {
       const currentRect = eyeRef.current.getBoundingClientRect();
       const currentIrisRect = irisRef.current.getBoundingClientRect();
@@ -152,28 +148,6 @@ function Eye(props: Props) {
       </g>
     </svg>
   );
-}
-
-addPropertyControls(Eye, {
-    white: {
-        type: ControlType.Object,
-        controls: {
-            x: { type: ControlType.Number, defaultValue: 150 },
-            y: { type: ControlType.Number, defaultValue: 150 },
-        },
-    },
-    iris: {
-        type: ControlType.Object,
-        controls: {
-            x: { type: ControlType.Number, defaultValue: 100 },
-            y: { type: ControlType.Number, defaultValue: 100 },
-            color: { type: ControlType.Color, defaultValue: "#000" },
-        },
-    },
-})
-
-Eye.defaultProps = {
-    throttleInterval: 0,
 }
 
 export default Eye;
